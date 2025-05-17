@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  consul:
+    image: hashicorp/consul:latest
+    container_name: consul
+    ports:
+      - "8500:8500"
+    restart: unless-stopped
+
+  gateaway-service:
+    build:
+      context: ./Gateaway-Service
+      dockerfile: dockerfile
+    depends_on:
+      - consul
+    ports:
+      - "8000:8000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONSUL__HOST=consul
+      - CONSUL__PORT=8500
+    restart: unless-stopped
+
+  config-service:
+    build:
+      context: ./Config-Service
+      dockerfile: dockerfile
+    depends_on:
+      - consul
+    ports:
+      - "8100:8100"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONSUL__HOST=consul
+      - CONSUL__PORT=8500
+    restart: unless-stopped

@@ -13,8 +13,7 @@ using (var consulClient = new ConsulClient(config =>
 {
     var services = new Dictionary<string, string>
     {
-        ["gateaway-service"] = "http://localhost:8000/",
-        [""]
+        ["gateway-service"] = "http://localhost:8000/"
   
     };
 
