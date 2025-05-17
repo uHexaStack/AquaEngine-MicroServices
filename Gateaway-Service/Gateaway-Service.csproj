@@ -11,7 +11,9 @@
         <PackageReference Include="Consul" Version="1.7.14.7" />
         <PackageReference Include="Ocelot" Version="24.0.0" />
         <PackageReference Include="Ocelot.Provider.Consul" Version="24.0.0" />
+        <PackageReference Include="Ocelot.Provider.Polly" Version="24.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+        <PackageReference Include="Winton.Extensions.Configuration.Consul" Version="3.4.0" />
     </ItemGroup>
 
 </Project>

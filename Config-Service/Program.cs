@@ -1,27 +1,33 @@
-using Winton.Extensions.Configuration.Consul;
+using Consul;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Configuration.AddConsul(
-    key: "config/myapp",
-    options =>
-    {
-        options.ConsulConfigurationOptions = cco =>
-        {
-            cco.Address = new Uri("http://localhost:8500");
-        };
-        options.ReloadOnChange = true;
-        options.Optional = true;
-    });
-
 var app = builder.Build();
 
-
-app.MapGet("/", (IConfiguration config) =>
+// 👉 Lógica para registrar microservicios en Consul KV al arrancar
+using (var consulClient = new ConsulClient(config =>
+       {
+           config.Address = new Uri("http://localhost:8500");
+       }))
 {
-    var greeting = config["greeting"];
-    var timeout = config["timeout"];
-    return $"Greeting: {greeting}, Timeout: {timeout}";
-});
+    var services = new Dictionary<string, string>
+    {
+        ["gateaway-service"] = "http://localhost:8000/",
+        [""]
+  
+    };
+
+    foreach (var service in services)
+    {
+        var key = $"config/registry/{service.Key}/address";
+        var value = Encoding.UTF8.GetBytes(service.Value);
+
+        var result = await consulClient.KV.Put(new KVPair(key) { Value = value });
+
+        Console.WriteLine($"Registered {service.Key} => {service.Value} | Success: {result.Response}");
+    }
+}
+
+app.MapGet("/", () => "Config Service is running");
 app.Run();

@@ -1,21 +1,25 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/values",
-      "UpstreamPathTemplate": "/api/servicea",
-      "UpstreamHttpMethod": [ "GET" ],
-      "ServiceName": "servicea",
-      "LoadBalancerOptions": {
-        "Type": "RoundRobin"
+      "DownstreamPathTemplate": "/api/customers/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customer-service",
+          "Port": 5001
+        }
+      ],
+      "UpstreamPathTemplate": "/customers/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 3,
+        "DurationOfBreak": 5000,
+        "TimeoutValue": 10000,
+        "CircuitBreakerEnabled": true
       }
     }
   ],
   "GlobalConfiguration": {
-    "ServiceDiscoveryProvider": {
-      "Host": "localhost",
-      "Port": 8500,
-      "Type": "Consul"
-    },
-    "BaseUrl": "http://localhost:8000"
+    "BaseUrl": "http://localhost:5000"
   }
 }
